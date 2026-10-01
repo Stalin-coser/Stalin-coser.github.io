@@ -288,7 +288,7 @@
       if (!false || !window.matchMedia('(max-width: 768px)').matches) {
         const isMobile = window.matchMedia('(max-width: 959px)').matches;
         if (isMobile) {
-          const aplayer = _$('#aplayer');
+          const aplayer = document.getElementById('aplayer');
           if (aplayer) {
             const aside = aplayer.parentNode?.parentNode;
             if (aside?.tagName === 'ASIDE') {
@@ -306,7 +306,7 @@
           autoplay: false || false,
           loop: '' || 'all',
           order: '' || 'list',
-          preload: 'metadata' || 'auto',
+          preload: 'none' || 'auto',
           volume: 0.25 || 0.7,
           mutex: null || true,
           listFolded: true || false,
@@ -315,9 +315,25 @@
       }
     }
     </script>
-  
-<script src="/vendor/js/APlayer.min.js" crossorigin="anonymous" defer onload="setupAPlayer()"></script>
-
+  <script>
+    // 主页面解除遮罩后再请求播放器库和封面；音频由 preload 选项按需加载。
+    var loadAPlayer = () => {
+      if (window.__yorAPlayerLoading) return;
+      window.__yorAPlayerLoading = true;
+      const script = document.createElement('script');
+      script.src = "/vendor/js/APlayer.min.js";
+      script.crossOrigin = 'anonymous';
+      script.onload = setupAPlayer;
+      document.head.appendChild(script);
+    };
+    const playerLoader = document.getElementById('loader');
+    if (playerLoader) {
+      if (playerLoader.classList.contains('loading')) loadAPlayer();
+      else window.addEventListener('reimu:page-ready', loadAPlayer, { once: true });
+    } else if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', loadAPlayer, { once: true });
+    } else loadAPlayer();
+  </script>
 
 
     <script src="/js/yor-theme.js" defer></script>

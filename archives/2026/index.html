@@ -55,30 +55,49 @@
   <script>
     // 每轮展示独立计时；重复结束请求不会绕过时长，下一轮会取消旧定时器。
     var loaderMinDuration = 1500;
+    var loaderMaxDuration = Math.max(loaderMinDuration, 5000);
     var loaderStartedAt = 0;
     var loaderHideTimer = null;
+    var loaderDeadlineTimer = null;
+    var loaderActive = false;
+    var loaderRound = 0;
     var loaderEl = document.getElementById('loader');
     var startLoading = () => {
       clearTimeout(loaderHideTimer);
+      clearTimeout(loaderDeadlineTimer);
       loaderHideTimer = null;
+      loaderActive = true;
+      loaderRound += 1;
       loaderStartedAt = performance.now();
       document.body.style.overflow = 'hidden';
       loaderEl.classList.remove("loading");
+      loaderDeadlineTimer = setTimeout(hideLoader, loaderMaxDuration);
     }
     var hideLoader = () => {
+      if (!loaderActive) return;
+      loaderActive = false;
+      clearTimeout(loaderHideTimer);
+      clearTimeout(loaderDeadlineTimer);
       document.body.style.overflow = 'auto';
       loaderEl.classList.add('loading');
+      window.dispatchEvent(new CustomEvent('reimu:page-ready'));
     };
 
     var endLoading = () => {
+      if (!loaderActive) return;
       clearTimeout(loaderHideTimer);
       var remaining = loaderMinDuration - (performance.now() - loaderStartedAt);
       if (remaining <= 0) hideLoader();
       else loaderHideTimer = setTimeout(hideLoader, remaining);
     }
     startLoading();
-    // 初次进入等待非懒加载资源完成；PJAX 沿用主题的完成事件。
-    window.addEventListener('load', endLoading, { once: true });
+    // 正文解析完成即可阅读，不等待图片、音乐封面及延迟脚本的 window.load。
+    // 延迟脚本也可能拖住 DOMContentLoaded，因此每轮另设独立的最长等待时间。
+    var initialLoaderRound = loaderRound;
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => {
+      if (loaderRound === initialLoaderRound) endLoading();
+    }, { once: true });
+    else endLoading();
   </script>
 <div id="copy-tooltip"></div>
 <div id="heatmap-tooltip"></div>
@@ -631,7 +650,7 @@
       if (!false || !window.matchMedia('(max-width: 768px)').matches) {
         const isMobile = window.matchMedia('(max-width: 959px)').matches;
         if (isMobile) {
-          const aplayer = _$('#aplayer');
+          const aplayer = document.getElementById('aplayer');
           if (aplayer) {
             const aside = aplayer.parentNode?.parentNode;
             if (aside?.tagName === 'ASIDE') {
@@ -649,7 +668,7 @@
           autoplay: false || false,
           loop: '' || 'all',
           order: '' || 'list',
-          preload: 'metadata' || 'auto',
+          preload: 'none' || 'auto',
           volume: 0.25 || 0.7,
           mutex: null || true,
           listFolded: true || false,
@@ -658,9 +677,25 @@
       }
     }
     </script>
-  
-<script src="/vendor/js/APlayer.min.js" crossorigin="anonymous" defer onload="setupAPlayer()"></script>
-
+  <script>
+    // 主页面解除遮罩后再请求播放器库和封面；音频由 preload 选项按需加载。
+    var loadAPlayer = () => {
+      if (window.__yorAPlayerLoading) return;
+      window.__yorAPlayerLoading = true;
+      const script = document.createElement('script');
+      script.src = "/vendor/js/APlayer.min.js";
+      script.crossOrigin = 'anonymous';
+      script.onload = setupAPlayer;
+      document.head.appendChild(script);
+    };
+    const playerLoader = document.getElementById('loader');
+    if (playerLoader) {
+      if (playerLoader.classList.contains('loading')) loadAPlayer();
+      else window.addEventListener('reimu:page-ready', loadAPlayer, { once: true });
+    } else if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', loadAPlayer, { once: true });
+    } else loadAPlayer();
+  </script>
 
 
       <script src="/js/yor-theme.js" defer></script>
