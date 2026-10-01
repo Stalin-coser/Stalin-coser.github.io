@@ -1,8 +1,8 @@
 /* 只覆盖已批准的角色素材和配色，沿用 Reimu 原有栏目布局。 */
 #header img{object-position:50% 32%;filter:brightness(.85)}
-.post-categories-cover img[src*="yor-poster"],.post-cover img[data-src*="yor-poster"]{object-position:50% 22%}
-.post-categories-cover:has(img[data-src*="yor-art"]){background:linear-gradient(45deg,#70243a,#b54d5f)}
-.post-categories-cover img[data-src*="yor-art"]{object-fit:contain;object-position:90% 10%}
+.post-categories-cover img[src*="yor-poster"],.post-categories-cover img[data-yor-source*="yor-poster"],.post-cover img[data-src*="yor-poster"]{object-position:50% 22%}
+.post-categories-cover:has(img[data-src*="yor-art"],img[src*="yor-art"],img[data-yor-source*="yor-art"]){background:linear-gradient(45deg,#70243a,#b54d5f)}
+.post-categories-cover img[data-src*="yor-art"],.post-categories-cover img[src*="yor-art"],.post-categories-cover img[data-yor-source*="yor-art"]{object-fit:contain;object-position:90% 10%}
 /* 六张经确认的文章封面：保持审核页的居中裁切。 */
 .post-cover img[src*="/images/covers/yor-f"],.post-cover img[data-src*="/images/covers/yor-f"]{object-position:50% 50%}
 /* 搜索 S2：保留完整官方人物，前景结果留出阅读空间。 */
