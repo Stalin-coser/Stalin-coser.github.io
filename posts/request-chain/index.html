@@ -45,7 +45,15 @@
 <meta name="generator" content="Hexo 8.1.2"></head>
 
   <body>
-      <div id='loader'>
+      <style>
+    /* 动画库慢载时先显示正文；初始化后的元素仍使用原主题动画。 */
+    .reimu-page-ready [data-aos]:not(.aos-init) {
+      opacity: 1 !important;
+      transform: none !important;
+      transition: none !important;
+    }
+  </style>
+  <div id='loader'>
     <div class="loading-left-bg loading-bg"></div>
     <div class="loading-right-bg loading-bg"></div>
     <div class="spinner-box">
@@ -82,6 +90,7 @@
       clearTimeout(loaderHideTimer);
       clearTimeout(loaderDeadlineTimer);
       document.body.style.overflow = 'auto';
+      document.body.classList.add('reimu-page-ready');
       loaderEl.classList.add('loading');
       window.dispatchEvent(new CustomEvent('reimu:page-ready'));
     };
