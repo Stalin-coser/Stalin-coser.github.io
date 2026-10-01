@@ -42,6 +42,17 @@ function loadScripts(scripts, index) {
   }
 }
 if (window.Pjax) {
+  // 请求失败时依赖只发出完成事件，旧正文不会被替换。
+  // 保留成功时的局部切换和音乐连续播放，失败则直接打开原目标。
+  const handleResponse = Pjax.prototype.handleResponse;
+  Pjax.prototype.handleResponse = function (responseText, request, href, options) {
+    if (typeof responseText !== 'string') {
+      this.abortRequest(this.request);
+      window.location.assign(href);
+      return;
+    }
+    return handleResponse.call(this, responseText, request, href, options);
+  };
   Pjax.prototype.getElements = function () {
     const i18nLanguages = window.REIMU_CONFIG.i18n_languages;
     const baseUrl = window.REIMU_CONFIG.base;
@@ -159,6 +170,7 @@ window.Pjax &&
       },
     },
     cacheBust: false,
+    timeout: 8000, // 早于 12 秒遮罩兜底，避免请求悬挂后只露出旧页面。
   });
 
 window.addEventListener("pjax:success", () => {
