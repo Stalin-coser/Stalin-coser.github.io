@@ -1,0 +1,41 @@
+/* 只覆盖已批准的角色素材和配色，沿用 Reimu 原有栏目布局。 */
+#header img{object-position:50% 32%;filter:brightness(.85)}
+.post-categories-cover img[src*="yor-poster"],.post-cover img[data-src*="yor-poster"]{object-position:50% 22%}
+.post-categories-cover:has(img[data-src*="yor-art"]){background:linear-gradient(45deg,#70243a,#b54d5f)}
+.post-categories-cover img[data-src*="yor-art"]{object-fit:contain;object-position:90% 10%}
+/* 六张经确认的文章封面：保持审核页的居中裁切。 */
+.post-cover img[src*="/images/covers/yor-f"],.post-cover img[data-src*="/images/covers/yor-f"]{object-position:50% 50%}
+/* 搜索 S2：保留完整官方人物，前景结果留出阅读空间。 */
+.site-search .reimu-popup{isolation:isolate}
+.site-search .reimu-search{position:relative;z-index:1;background:var(--color-wrap)}
+.site-search .reimu-results{z-index:1;padding-right:172px}
+.site-search .reimu-bg{width:auto;height:280px;max-height:calc(100% - 60px);max-width:none;right:22px;bottom:12px;opacity:.65;object-fit:contain;z-index:0;pointer-events:none}
+@media(max-width:760px){.site-search .reimu-results{padding-right:142px}.site-search .reimu-bg{height:254px;right:8px;bottom:8px}}
+#content{position:relative}
+#content::before{content:'';position:fixed;pointer-events:none;right:-60px;bottom:-120px;width:min(600px,60vw);height:620px;background:url('/images/yor-art.png') center/contain no-repeat;opacity:.055;z-index:-1}
+.main-nav-icon img,.sidebar-menu-icon img{border-radius:50%;object-fit:contain;vertical-align:middle}
+.main-nav-icon.rotate,.sidebar-menu-icon.rotate{animation:none}
+.sidebar-status{font-size:12px;color:var(--color-link);margin:12px 0 0;line-height:1.8}
+.sidebar-status::before{content:'';display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--color-link);margin-right:6px;vertical-align:middle}
+.sidebar-author img{object-fit:cover}
+.sidebar-description{white-space:pre-line;line-height:1.7}
+#loader .loading-bg{background:rgba(255,245,243,.96)}
+#loader .spinner-box .loading-taichi{opacity:1;transform:translateY(-16px)}
+#loader .loading-taichi img{display:block;width:108px;height:155px;object-fit:contain;animation:yor-breathe 2.4s ease-in-out infinite}
+#loader .spinner-box .loading-word{top:calc(50% + 92px);transform:translate(calc(-50% + 12px),-50%);font-size:13px;font-weight:400;letter-spacing:2px;color:var(--color-link)}
+@keyframes yor-breathe{50%{transform:translateY(-5px)}}
+[data-theme=dark] #loader .loading-bg{background:rgba(45,30,37,.96)}
+.sidebar-top-taichi{border-radius:50%}
+.footer-info-sep{border-radius:50%}
+.footer-note{font-size:12px;opacity:.75}
+.profile-links{display:flex;gap:12px;flex-wrap:wrap;margin:18px 0}
+.profile-links a{padding:8px 16px;border:1px solid var(--red-3);border-radius:8px;text-decoration:none}
+.portfolio-item,.anime-item{padding:20px 0;border-bottom:1px solid var(--red-5)}
+.anime-item img{width:170px;max-width:100%;float:right;margin:0 0 16px 24px;border-radius:10px}
+.anime-item::after{content:'';display:block;clear:both}
+.friend-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:24px 0}
+.friend-grid a{display:block;padding:20px 14px;border:1px solid var(--red-4);border-radius:10px;text-decoration:none;text-align:center}
+.friend-grid a strong,.friend-grid a span{display:block}.friend-grid a span{font-size:12px;color:var(--grey-7);margin-top:6px}
+a:focus-visible,button:focus-visible,[role=button]:focus-visible,input:focus-visible{outline:2px solid var(--color-link);outline-offset:4px}
+@media(max-width:479px){.friend-grid{grid-template-columns:1fr}.anime-item img{float:none;margin:10px 0;max-width:160px}}
+@media(prefers-reduced-motion:reduce){#loader .loading-taichi img{animation:none!important}*,*::before,*::after{scroll-behavior:auto!important}}
